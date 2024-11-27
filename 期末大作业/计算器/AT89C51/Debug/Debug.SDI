@@ -1,0 +1,229 @@
+,,,$NOMOD51
+,,,$INCLUDE (8051.MCU)
+,,,;   8051 processor definition file
+,,,;   ==============================
+,,,
+,,,P0      DATA    080H
+,,,SP      DATA    081H
+,,,DPL     DATA    082H
+,,,DPH     DATA    083H
+,,,PCON    DATA    087H
+,,,TCON    DATA    088H
+,,,TMOD    DATA    089H
+,,,TL0     DATA    08AH
+,,,TL1     DATA    08BH
+,,,TH0     DATA    08CH
+,,,TH1     DATA    08DH
+,,,P1      DATA    090H
+,,,SCON    DATA    098H
+,,,SBUF    DATA    099H
+,,,P2      DATA    0A0H
+,,,IE      DATA    0A8H
+,,,P3      DATA    0B0H
+,,,IP      DATA    0B8H
+,,,PSW     DATA    0D0H
+,,,ACC     DATA    0E0H
+,,,B       DATA    0F0H
+,,,
+,,,IT0     BIT     088H
+,,,IE0     BIT     089H
+,,,IT1     BIT     08AH
+,,,IE1     BIT     08BH
+,,,TR0     BIT     08CH
+,,,TF0     BIT     08DH
+,,,TR1     BIT     08EH
+,,,TF1     BIT     08FH
+,,,RI      BIT     098H
+,,,TI      BIT     099H
+,,,RB8     BIT     09AH
+,,,TB8     BIT     09BH
+,,,REN     BIT     09CH
+,,,SM2     BIT     09DH
+,,,SM1     BIT     09EH
+,,,SM0     BIT     09FH
+,,,EX0     BIT     0A8H
+,,,ET0     BIT     0A9H
+,,,EX1     BIT     0AAH
+,,,ET1     BIT     0ABH
+,,,ES      BIT     0ACH
+,,,EA      BIT     0AFH
+,,,RXD     BIT     0B0H
+,,,TXD     BIT     0B1H
+,,,INT0    BIT     0B2H
+,,,INT1    BIT     0B3H
+,,,T0      BIT     0B4H
+,,,T1      BIT     0B5H
+,,,WR      BIT     0B6H
+,,,RD      BIT     0B7H
+,,,PX0     BIT     0B8H
+,,,PT0     BIT     0B9H
+,,,PX1     BIT     0BAH
+,,,PT1     BIT     0BBH
+,,,PS      BIT     0BCH
+,,,P       BIT     0D0H
+,,,OV      BIT     0D2H
+,,,RS0     BIT     0D3H
+,,,RS1     BIT     0D4H
+,,,F0      BIT     0D5H
+,,,AC      BIT     0D6H
+,,,CY      BIT     0D7H
+,,,
+,,,RESET   CODE    000H
+,,,EXTI0   CODE    003H
+,,,TIMER0  CODE    00BH
+,,,EXTI1   CODE    013H
+,,,TIMER1  CODE    01BH
+,,,SINT    CODE    023H
+,,,
+,,,OP1 EQU 66H
+,,,OPERATOR EQU 67H
+,,,OP2 EQU 68H
+,,,
+,,,ORG 0000H
+0000,21 00,,AJMP START;Ìø¹ýÖÐ¶ÏÈë¿ÚµØÖ·
+,,,ORG 000BH
+000B,02 01 98,,LJMP CTC0;³¤Ìø×ªÖ¸Áî£º¶¨Ê±Æ÷ÖÐ¶Ï³ÌÐò
+,,,ORG 0100H
+,,,
+0100,,START,START:
+,,,;--------------------------------------------------------
+0100,12 01 B6,,    CALL CLEAR
+0103,78 60,,    MOV R0,#60H;R0´æÏÔÊ¾»º³åÇøµ¥ÔªµØÖ·
+0105,7F FE,,    MOV R7,#0FEH;ÓÃ×÷ËÄÎ»ÊýÂë¹ÜµÄÎ»Ñ¡ÐÅºÅ
+0107,75 89 01,,    MOV TMOD, #01H
+010A,75 8A F0,,    MOV TL0, #0F0H
+010D,75 8C D8,,    MOV TH0, #0D8H ;µçÂ·Í¼ÖÐÉèÖÃ¾§ÕñÎª12MHZ£¬Ôò¶¨Ê±Æ÷µÄ¼ÆÊýÆµÂÊÎª 1MHz¡£
+,,,    ;¶¨Ê±10ms, T0³õÊ¼Öµ¼ÆËãµÃ55536¼´D8F0H    (65536-55536)/(1M)=0.01
+0110,D2 8C,,    SETB TR0 ;ÏÈ²»Æô¶¯¶¨Ê±Æ÷T0£¬µÈµ½°´ÏÂ¡°=¡±Ê±ÔÙÆô¶¯T0
+0112,D2 A9,,    SETB ET0 ;ÔÊÐíT0ÖÐ¶Ï
+0114,D2 AF,,    SETB EA ;CPU¿ª·ÅÖÐ¶Ï
+,,,;---------------------------------------------------------------
+,,,
+,,,
+,,,;Ö÷³ÌÐò--------------------------------------------------------------
+0116,02 01 1F,MAIN,MAIN:LJMP KEYJUDGE
+0119,12 01 46,SCAN,SCAN:LCALL KEYSCAN
+011C,02 01 16,,     LJMP MAIN
+,,,;ÅÐ¶ÏÊÇ·ñÓÐ°´¼ü°´ÏÂ
+011F,,KEYJUDGE,KEYJUDGE:
+011F,75 B0 F0,,    MOV P3,#0F0H
+0122,E5 B0,,    MOV A,P3
+0124,64 F0,,    XRL A,#0F0H
+0126,70 03,,    JNZ DELAY
+0128,02 01 16,,    LJMP MAIN
+,,,    ;DELAYµÄ×÷ÓÃÊÇ±ÜÃâÒ»´Î°´¼üµÄ¶à´Î¼ì²â
+,,,    ;ÓÉÓÚ²âÊÔ¹ý³ÌÖÐ0FFH*0FFH´ÎµÄDELAY»¹»áÓÐÖØ¸´¼ì²â
+,,,    ;ËùÒÔÔÚµÚÒ»¶ÎDELAYµÄºóÃæÓÖ¼ÓÁËÒ»¶ÎDELAY
+012B,7C FF,DELAY,DELAY:MOV R4,#0FFH
+012D,7D FF,LOOP1,LOOP1:MOV R5,#0FFH
+012F,DD FE,LOOP2,LOOP2:DJNZ R5,LOOP2
+0131,DC FA,,    DJNZ R4,LOOP1
+0133,7C FF,,    MOV R4,#0FFH
+0135,7D A0,LOOP10,LOOP10:MOV R5,#0A0H
+0137,DD FE,LOOP20,LOOP20:DJNZ R5,LOOP20
+0139,DC FA,,    DJNZ R4,LOOP10
+013B,75 B0 F0,,    MOV P3,#0F0H
+013E,E5 B0,,    MOV A,P3
+0140,64 F0,,    XRL A,#0F0H
+0142,60 D2,,    JZ MAIN
+0144,80 D3,,    JMP SCAN
+,,,;-----------------------------------------------------------------------------------
+,,,
+,,,;====================================================================
+,,,;ÐÐÉ¨Ãè·¨¼üÅÌÊäÈë×Ó³ÌÐò  ½«ÊäÈëµÄÊý´æÈë»º³åÇø60H£¬61H
+,,,;ÓÃµ½¼Ä´æÆ÷R0¡¢R1¡¢R2¡¢R3
+,,,;R6´æÁÐºÅ£¨0£¬1£¬2£¬3£©
+,,,;R1´æÐÐºÅ*4£¨0£¬4£¬8£¬C£©
+,,,;R2ÓÃ×÷ÁÐÑ¡
+,,,;R3¿ØÖÆÑ­»·´ÎÊý£¨×Ü¹²ËÄ´Î£©
+,,,
+0146,,KEYSCAN,KEYSCAN:
+0146,7E 00,,    MOV R6,#00H
+0148,79 00,,    MOV R1,#00H
+014A,7A FE,,    MOV R2,#0FEH
+014C,7B 04,,    MOV R3,#04H
+014E,,KEY,KEY:
+014E,8A B0,,    MOV P3,R2
+0150,20 B4 05,KEY0,KEY0:JB P3.4,KEY1
+0153,79 00,,    MOV R1,#00H
+0155,02 01 79,,    LJMP NUM
+0158,,KEY1,KEY1:
+0158,20 B5 05,,    JB P3.5,KEY2
+015B,79 04,,    MOV R1,#04H
+015D,02 01 79,,    LJMP NUM
+0160,,KEY2,KEY2:
+0160,20 B6 05,,    JB P3.6,KEY3
+0163,79 08,,    MOV R1,#08H
+0165,02 01 79,,    LJMP NUM
+0168,,KEY3,KEY3:
+0168,20 B7 05,,    JB P3.7,NEXT
+016B,79 0C,,    MOV R1,#0CH
+016D,02 01 79,,    LJMP NUM
+0170,,NEXT,NEXT:
+0170,0E,,    INC R6
+0171,EA,,    MOV A,R2
+0172,23,,    RL A
+0173,FA,,    MOV R2,A
+0174,DB D8,,    DJNZ R3,KEY
+0176,02 01 79,,    LJMP NUM
+0179,,NUM,NUM:
+0179,EE,,    MOV A,R6
+017A,29,,    ADD A,R1
+017B,90 01 DA,,    MOV DPTR,#KEYBOARD
+017E,93,,    MOVC A,@A+DPTR
+017F,B4 0C 04,,    CJNE A,#0CH,NEXT1
+,,,    ;µ½Õâ°´ÏÂÁË¡°C¡±£¬Çå¿Õ»º³åÇø
+0182,12 01 B6,,    CALL CLEAR
+0185,22,,    RET
+0186,,NEXT1,NEXT1:
+,,,    ;µ½ÕâÊäÈëÊý×Öµ½»º³åÇø
+0186,85 64 65,,    MOV 65H,64H
+0189,85 63 64,,    MOV 64H,63H
+018C,85 62 63,,    MOV 63H,62H
+018F,85 61 62,,    MOV 62H,61H
+0192,85 60 61,,    MOV 61H,60H;°Ñ20hµ¥ÔªÖÐµÄÄÚÈÝËÍÍù61h
+0195,F5 60,,    MOV 60H,A;°ÑÐÂÊäÈëµÄÊýËÍÍù60H
+0197,22,,    RET
+,,,
+,,,;====================================================================
+,,,
+,,,;¶¨Ê±Æ÷0ÖÐ¶Ï×Ó³ÌÐò------------------------------------------------------------------
+0198,,CTC0,CTC0:
+0198,75 8A F0,,    MOV TL0, #0F0H
+019B,75 8C D8,,    MOV TH0, #0D8H
+019E,90 01 C9,,    MOV DPTR, #TABLE
+01A1,8F 90,,    MOV P1,R7
+01A3,E6,,    MOV A,@R0
+01A4,93,,    MOVC A,@A+DPTR
+01A5,F5 80,,    MOV P0, A
+01A7,EF,,    MOV A,R7
+01A8,23,,    RL A;Î»Ñ¡ÐÅºÅ×óÒÆÒ»Î»
+01A9,B4 BF 02,,    CJNE A,#0BFH,NEXT2
+01AC,74 FE,,    MOV A,#0FEH
+01AE,,NEXT2,NEXT2:
+01AE,FF,,    MOV R7,A
+01AF,08,,    INC R0;ÏÔÊ¾»º³åÇøµ¥ÔªºÅÒÆ¶¯Ò»Î»
+01B0,B8 66 02,,    CJNE R0,#66H,EXIT
+01B3,78 60,,    MOV R0,#60H
+01B5,,EXIT,EXIT:
+01B5,32,,    RETI
+,,, ;-----------------------------------------------------------------------------------
+,,,
+,,,;Çå¿Õ»º³åÇø---------------------------------------------------------------------------
+01B6,,CLEAR,CLEAR:
+01B6,75 60 10,,    MOV 60H,#10H;¶ÔÓ¦TABLE±íµÄ00H£¬ÔÚÊýÂë¹ÜÉÏ²»ÏÔÊ¾
+01B9,75 61 10,,    MOV 61H,#10H;
+01BC,75 62 10,,    MOV 62H,#10H;
+01BF,75 63 10,,    MOV 63H,#10H;
+01C2,75 64 10,,    MOV 64H,#10H;
+01C5,75 65 10,,    MOV 65H,#10H;
+01C8,22,,    RET
+,,, ;--------------------------------------------------------------------------------------
+,,,
+01C9,3F 06 5B 4F,TABLE,TABLE: DB 3FH, 06H, 5BH, 4FH, 66H, 6DH, 7DH, 07H, 7FH, 6FH, 77H, 7CH, 39H, 5EH, 79H, 71H  ,00H;×îºóÒ
+01DA,07 08 09 0D,KEYBOARD,KEYBOARD:DB 07H,08H,09H,0DH;7,8,9,/(Devide)
+01DE,04 05 06 0F,,         DB 04H,05H,06H,0FH;4,5,6,*(ÓÃF±íÊ¾£©
+01E2,01 02 03 0B,,         DB 01H,02H,03H,0BH;1,2,3,-(suB)
+01E6,0C 00 0E 0A,,         DB 0CH,00H,0EH,0AH;C,0,=(Equal),+(Add)
+,,,
+000E,,,END

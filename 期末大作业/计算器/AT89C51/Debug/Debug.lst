@@ -1,0 +1,410 @@
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 1
+
+
+
+
+
+       MCS-51 Family Macro Assembler   A S E M - 5 1   V 1.3
+       =====================================================
+
+
+
+	Source File:	..\main.asm
+	Object File:	Debug.HEX
+	List File:	Debug.lst
+
+
+
+ Line  I  Addr  Code            Source
+
+    1:				$NOMOD51
+    2:				$INCLUDE (8051.MCU)
+    3: 1			;   8051 processor definition file
+    4: 1			;   ==============================
+    5: 1
+    6: 1	N	 80	P0	DATA	080H
+    7: 1	N	 81	SP	DATA	081H
+    8: 1	N	 82	DPL	DATA	082H
+    9: 1	N	 83	DPH	DATA	083H
+   10: 1	N	 87	PCON	DATA	087H
+   11: 1	N	 88	TCON	DATA	088H
+   12: 1	N	 89	TMOD	DATA	089H
+   13: 1	N	 8A	TL0	DATA	08AH
+   14: 1	N	 8B	TL1	DATA	08BH
+   15: 1	N	 8C	TH0	DATA	08CH
+   16: 1	N	 8D	TH1	DATA	08DH
+   17: 1	N	 90	P1	DATA	090H
+   18: 1	N	 98	SCON	DATA	098H
+   19: 1	N	 99	SBUF	DATA	099H
+   20: 1	N	 A0	P2	DATA	0A0H
+   21: 1	N	 A8	IE	DATA	0A8H
+   22: 1	N	 B0	P3	DATA	0B0H
+   23: 1	N	 B8	IP	DATA	0B8H
+   24: 1	N	 D0	PSW	DATA	0D0H
+   25: 1	N	 E0	ACC	DATA	0E0H
+   26: 1	N	 F0	B	DATA	0F0H
+   27: 1
+   28: 1	N	 88	IT0	BIT	088H
+   29: 1	N	 89	IE0	BIT	089H
+   30: 1	N	 8A	IT1	BIT	08AH
+   31: 1	N	 8B	IE1	BIT	08BH
+   32: 1	N	 8C	TR0	BIT	08CH
+   33: 1	N	 8D	TF0	BIT	08DH
+   34: 1	N	 8E	TR1	BIT	08EH
+   35: 1	N	 8F	TF1	BIT	08FH
+   36: 1	N	 98	RI	BIT	098H
+   37: 1	N	 99	TI	BIT	099H
+   38: 1	N	 9A	RB8	BIT	09AH
+   39: 1	N	 9B	TB8	BIT	09BH
+   40: 1	N	 9C	REN	BIT	09CH
+   41: 1	N	 9D	SM2	BIT	09DH
+   42: 1	N	 9E	SM1	BIT	09EH
+   43: 1	N	 9F	SM0	BIT	09FH
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 2
+
+
+
+ Line  I  Addr  Code            Source
+
+   44: 1	N	 A8	EX0	BIT	0A8H
+   45: 1	N	 A9	ET0	BIT	0A9H
+   46: 1	N	 AA	EX1	BIT	0AAH
+   47: 1	N	 AB	ET1	BIT	0ABH
+   48: 1	N	 AC	ES	BIT	0ACH
+   49: 1	N	 AF	EA	BIT	0AFH
+   50: 1	N	 B0	RXD	BIT	0B0H
+   51: 1	N	 B1	TXD	BIT	0B1H
+   52: 1	N	 B2	INT0	BIT	0B2H
+   53: 1	N	 B3	INT1	BIT	0B3H
+   54: 1	N	 B4	T0	BIT	0B4H
+   55: 1	N	 B5	T1	BIT	0B5H
+   56: 1	N	 B6	WR	BIT	0B6H
+   57: 1	N	 B7	RD	BIT	0B7H
+   58: 1	N	 B8	PX0	BIT	0B8H
+   59: 1	N	 B9	PT0	BIT	0B9H
+   60: 1	N	 BA	PX1	BIT	0BAH
+   61: 1	N	 BB	PT1	BIT	0BBH
+   62: 1	N	 BC	PS	BIT	0BCH
+   63: 1	N	 D0	P	BIT	0D0H
+   64: 1	N	 D2	OV	BIT	0D2H
+   65: 1	N	 D3	RS0	BIT	0D3H
+   66: 1	N	 D4	RS1	BIT	0D4H
+   67: 1	N	 D5	F0	BIT	0D5H
+   68: 1	N	 D6	AC	BIT	0D6H
+   69: 1	N	 D7	CY	BIT	0D7H
+   70: 1
+   71: 1	N      0000	RESET	CODE	000H
+   72: 1	N      0003	EXTI0	CODE	003H
+   73: 1	N      000B	TIMER0	CODE	00BH
+   74: 1	N      0013	EXTI1	CODE	013H
+   75: 1	N      001B	TIMER1	CODE	01BH
+   76: 1	N      0023	SINT	CODE	023H
+   77:
+   78:		N      0066	OP1 EQU 66H
+   79:		N      0067	OPERATOR EQU 67H
+   80:		N      0068	OP2 EQU 68H
+   81:
+   82:		N      0000	ORG 0000H
+   83:	  0000	21 00		AJMP START;Ìø¹ýÖÐ¶ÏÈë¿ÚµØÖ·
+   84:		N      000B	ORG 000BH
+   85:	  000B	02 01 98	LJMP CTC0;³¤Ìø×ªÖ¸Áî£º¶¨Ê±Æ÷ÖÐ¶Ï³ÌÐò
+   86:		N      0100	ORG 0100H
+   87:
+   88:	  0100			START:
+   89:				;--------------------------------------------------------
+   90:	  0100	12 01 B6	    CALL CLEAR
+   91:	  0103	78 60		    MOV R0,#60H;R0´æÏÔÊ¾»º³åÇøµ¥ÔªµØÖ·
+   92:	  0105	7F FE		    MOV R7,#0FEH;ÓÃ×÷ËÄÎ»ÊýÂë¹ÜµÄÎ»Ñ¡ÐÅºÅ
+   93:	  0107	75 89 01	    MOV TMOD, #01H
+   94:	  010A	75 8A F0	    MOV TL0, #0F0H
+   95:	  010D	75 8C D8	    MOV TH0, #0D8H ;µçÂ·Í¼ÖÐÉèÖÃ¾§ÕñÎª12MHZ£¬Ôò¶¨Ê±Æ÷µÄ¼ÆÊýÆµÂÊÎª 1MHz¡£
+   96:				    ;¶¨Ê±10ms, T0³õÊ¼Öµ¼ÆËãµÃ55536¼´D8F0H    (65536-55536)/(1M)=0.01
+   97:	  0110	D2 8C		    SETB TR0 ;ÏÈ²»Æô¶¯¶¨Ê±Æ÷T0£¬µÈµ½°´ÏÂ¡°=¡±Ê±ÔÙÆô¶¯T0
+   98:	  0112	D2 A9		    SETB ET0 ;ÔÊÐíT0ÖÐ¶Ï
+   99:	  0114	D2 AF		    SETB EA ;CPU¿ª·ÅÖÐ¶Ï
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 3
+
+
+
+ Line  I  Addr  Code            Source
+
+  100:				;---------------------------------------------------------------
+  101:
+  102:
+  103:				;Ö÷³ÌÐò--------------------------------------------------------------
+  104:	  0116	02 01 1F	MAIN:LJMP KEYJUDGE
+  105:	  0119	12 01 46	SCAN:LCALL KEYSCAN
+  106:	  011C	02 01 16	     LJMP MAIN
+  107:				;ÅÐ¶ÏÊÇ·ñÓÐ°´¼ü°´ÏÂ
+  108:	  011F			KEYJUDGE:
+  109:	  011F	75 B0 F0	    MOV P3,#0F0H
+  110:	  0122	E5 B0		    MOV A,P3
+  111:	  0124	64 F0		    XRL A,#0F0H
+  112:	  0126	70 03		    JNZ DELAY
+  113:	  0128	02 01 16	    LJMP MAIN
+  114:				    ;DELAYµÄ×÷ÓÃÊÇ±ÜÃâÒ»´Î°´¼üµÄ¶à´Î¼ì²â
+  115:				    ;ÓÉÓÚ²âÊÔ¹ý³ÌÖÐ0FFH*0FFH´ÎµÄDELAY»¹»áÓÐÖØ¸´¼ì²â
+  116:				    ;ËùÒÔÔÚµÚÒ»¶ÎDELAYµÄºóÃæÓÖ¼ÓÁËÒ»¶ÎDELAY
+  117:	  012B	7C FF		DELAY:MOV R4,#0FFH
+  118:	  012D	7D FF		LOOP1:MOV R5,#0FFH
+  119:	  012F	DD FE		LOOP2:DJNZ R5,LOOP2
+  120:	  0131	DC FA		    DJNZ R4,LOOP1
+  121:	  0133	7C FF		    MOV R4,#0FFH
+  122:	  0135	7D A0		LOOP10:MOV R5,#0A0H
+  123:	  0137	DD FE		LOOP20:DJNZ R5,LOOP20
+  124:	  0139	DC FA		    DJNZ R4,LOOP10
+  125:	  013B	75 B0 F0	    MOV P3,#0F0H
+  126:	  013E	E5 B0		    MOV A,P3
+  127:	  0140	64 F0		    XRL A,#0F0H
+  128:	  0142	60 D2		    JZ MAIN
+  129:	  0144	80 D3		    JMP SCAN
+  130:				;-----------------------------------------------------------------------------------
+  131:
+  132:				;====================================================================
+  133:				;ÐÐÉ¨Ãè·¨¼üÅÌÊäÈë×Ó³ÌÐò  ½«ÊäÈëµÄÊý´æÈë»º³åÇø60H£¬61H
+  134:				;ÓÃµ½¼Ä´æÆ÷R0¡¢R1¡¢R2¡¢R3
+  135:				;R6´æÁÐºÅ£¨0£¬1£¬2£¬3£©
+  136:				;R1´æÐÐºÅ*4£¨0£¬4£¬8£¬C£©
+  137:				;R2ÓÃ×÷ÁÐÑ¡
+  138:				;R3¿ØÖÆÑ­»·´ÎÊý£¨×Ü¹²ËÄ´Î£©
+  139:
+  140:	  0146			KEYSCAN:
+  141:	  0146	7E 00		    MOV R6,#00H
+  142:	  0148	79 00		    MOV R1,#00H
+  143:	  014A	7A FE		    MOV R2,#0FEH
+  144:	  014C	7B 04		    MOV R3,#04H
+  145:	  014E			KEY:
+  146:	  014E	8A B0		    MOV P3,R2
+  147:	  0150	20 B4 05	KEY0:JB P3.4,KEY1
+  148:	  0153	79 00		    MOV R1,#00H
+  149:	  0155	02 01 79	    LJMP NUM
+  150:	  0158			KEY1:
+  151:	  0158	20 B5 05	    JB P3.5,KEY2
+  152:	  015B	79 04		    MOV R1,#04H
+  153:	  015D	02 01 79	    LJMP NUM
+  154:	  0160			KEY2:
+  155:	  0160	20 B6 05	    JB P3.6,KEY3
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 4
+
+
+
+ Line  I  Addr  Code            Source
+
+  156:	  0163	79 08		    MOV R1,#08H
+  157:	  0165	02 01 79	    LJMP NUM
+  158:	  0168			KEY3:
+  159:	  0168	20 B7 05	    JB P3.7,NEXT
+  160:	  016B	79 0C		    MOV R1,#0CH
+  161:	  016D	02 01 79	    LJMP NUM
+  162:	  0170			NEXT:
+  163:	  0170	0E		    INC R6
+  164:	  0171	EA		    MOV A,R2
+  165:	  0172	23		    RL A
+  166:	  0173	FA		    MOV R2,A
+  167:	  0174	DB D8		    DJNZ R3,KEY
+  168:	  0176	02 01 79	    LJMP NUM
+  169:	  0179			NUM:
+  170:	  0179	EE		    MOV A,R6
+  171:	  017A	29		    ADD A,R1
+  172:	  017B	90 01 DA	    MOV DPTR,#KEYBOARD
+  173:	  017E	93		    MOVC A,@A+DPTR
+  174:	  017F	B4 0C 04	    CJNE A,#0CH,NEXT1
+  175:				    ;µ½Õâ°´ÏÂÁË¡°C¡±£¬Çå¿Õ»º³åÇø
+  176:	  0182	12 01 B6	    CALL CLEAR
+  177:	  0185	22		    RET
+  178:	  0186			NEXT1:
+  179:				    ;µ½ÕâÊäÈëÊý×Öµ½»º³åÇø
+  180:	  0186	85 64 65	    MOV 65H,64H
+  181:	  0189	85 63 64	    MOV 64H,63H
+  182:	  018C	85 62 63	    MOV 63H,62H
+  183:	  018F	85 61 62	    MOV 62H,61H
+  184:	  0192	85 60 61	    MOV 61H,60H;°Ñ20hµ¥ÔªÖÐµÄÄÚÈÝËÍÍù61h
+  185:	  0195	F5 60		    MOV 60H,A;°ÑÐÂÊäÈëµÄÊýËÍÍù60H
+  186:	  0197	22		    RET
+  187:
+  188:				;====================================================================
+  189:
+  190:				;¶¨Ê±Æ÷0ÖÐ¶Ï×Ó³ÌÐò------------------------------------------------------------------
+  191:	  0198			CTC0:
+  192:	  0198	75 8A F0	    MOV TL0, #0F0H
+  193:	  019B	75 8C D8	    MOV TH0, #0D8H
+  194:	  019E	90 01 C9	    MOV DPTR, #TABLE
+  195:	  01A1	8F 90		    MOV P1,R7
+  196:	  01A3	E6		    MOV A,@R0
+  197:	  01A4	93		    MOVC A,@A+DPTR
+  198:	  01A5	F5 80		    MOV P0, A
+  199:	  01A7	EF		    MOV A,R7
+  200:	  01A8	23		    RL A;Î»Ñ¡ÐÅºÅ×óÒÆÒ»Î»
+  201:	  01A9	B4 BF 02	    CJNE A,#0BFH,NEXT2
+  202:	  01AC	74 FE		    MOV A,#0FEH
+  203:	  01AE			NEXT2:
+  204:	  01AE	FF		    MOV R7,A
+  205:	  01AF	08		    INC R0;ÏÔÊ¾»º³åÇøµ¥ÔªºÅÒÆ¶¯Ò»Î»
+  206:	  01B0	B8 66 02	    CJNE R0,#66H,EXIT
+  207:	  01B3	78 60		    MOV R0,#60H
+  208:	  01B5			EXIT:
+  209:	  01B5	32		    RETI
+  210:				 ;-----------------------------------------------------------------------------------
+  211:
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 5
+
+
+
+ Line  I  Addr  Code            Source
+
+  212:				;Çå¿Õ»º³åÇø---------------------------------------------------------------------------
+  213:	  01B6			CLEAR:
+  214:	  01B6	75 60 10	    MOV 60H,#10H;¶ÔÓ¦TABLE±íµÄ00H£¬ÔÚÊýÂë¹ÜÉÏ²»ÏÔÊ¾
+  215:	  01B9	75 61 10	    MOV 61H,#10H;
+  216:	  01BC	75 62 10	    MOV 62H,#10H;
+  217:	  01BF	75 63 10	    MOV 63H,#10H;
+  218:	  01C2	75 64 10	    MOV 64H,#10H;
+  219:	  01C5	75 65 10	    MOV 65H,#10H;
+  220:	  01C8	22		    RET
+  221:				 ;--------------------------------------------------------------------------------------
+  222:
+  223:	  01C9	3F 06 5B 4F	TABLE: DB 3FH, 06H, 5BH, 4FH, 66H, 6DH, 7DH, 07H, 7FH, 6FH, 77H, 7CH, 39H, 5EH, 79H, 71H  ,00H;×îºóÒ
+	  01CD	66 6D 7D 07	»¸ö00h±íÊ¾²»ÏÔÊ¾
+	  01D1	7F 6F 77 7C
+	  01D5	39 5E 79 71
+	  01D9	00
+  224:	  01DA	07 08 09 0D	KEYBOARD:DB 07H,08H,09H,0DH;7,8,9,/(Devide)
+  225:	  01DE	04 05 06 0F	         DB 04H,05H,06H,0FH;4,5,6,*(ÓÃF±íÊ¾£©
+  226:	  01E2	01 02 03 0B		 DB 01H,02H,03H,0BH;1,2,3,-(suB)
+  227:	  01E6	0C 00 0E 0A		 DB 0CH,00H,0EH,0AH;C,0,=(Equal),+(Add)
+  228:
+  229:				END
+
+
+
+
+
+                     register banks used:  ---
+
+                     no errors
+
+
+
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 6
+
+
+
+
+
+	       L I S T   O F   S Y M B O L S
+	       =============================
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+??ASEM_51			  NUMBER    8051
+??VERSION			  NUMBER    0130
+AC				  BIT	      D6	  68
+ACC				  DATA	      E0	  25
+B				  DATA	      F0	  26
+CLEAR				  CODE	    01B6	 213
+CTC0				  CODE	    0198	 191
+CY				  BIT	      D7	  69
+DELAY				  CODE	    012B	 117
+DPH				  DATA	      83	   9
+DPL				  DATA	      82	   8
+EA				  BIT	      AF	  49
+ES				  BIT	      AC	  48
+ET0				  BIT	      A9	  45
+ET1				  BIT	      AB	  47
+EX0				  BIT	      A8	  44
+EX1				  BIT	      AA	  46
+EXIT				  CODE	    01B5	 208
+EXTI0				  CODE	    0003	  72
+EXTI1				  CODE	    0013	  74
+F0				  BIT	      D5	  67
+IE				  DATA	      A8	  21
+IE0				  BIT	      89	  29
+IE1				  BIT	      8B	  31
+INT0				  BIT	      B2	  52
+INT1				  BIT	      B3	  53
+IP				  DATA	      B8	  23
+IT0				  BIT	      88	  28
+IT1				  BIT	      8A	  30
+KEY				  CODE	    014E	 145
+KEY0				  CODE	    0150	 147
+KEY1				  CODE	    0158	 150
+KEY2				  CODE	    0160	 154
+KEY3				  CODE	    0168	 158
+KEYBOARD			  CODE	    01DA	 224
+KEYJUDGE			  CODE	    011F	 108
+KEYSCAN				  CODE	    0146	 140
+LOOP1				  CODE	    012D	 118
+LOOP10				  CODE	    0135	 122
+LOOP2				  CODE	    012F	 119
+LOOP20				  CODE	    0137	 123
+MAIN				  CODE	    0116	 104
+NEXT				  CODE	    0170	 162
+NEXT1				  CODE	    0186	 178
+NEXT2				  CODE	    01AE	 203
+NUM				  CODE	    0179	 169
+OP1				  NUMBER    0066	  78
+OP2				  NUMBER    0068	  80
+OPERATOR			  NUMBER    0067	  79
+OV				  BIT	      D2	  64
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 7
+
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+P				  BIT	      D0	  63
+P0				  DATA	      80	   6
+P1				  DATA	      90	  17
+P2				  DATA	      A0	  20
+P3				  DATA	      B0	  22
+PCON				  DATA	      87	  10
+PS				  BIT	      BC	  62
+PSW				  DATA	      D0	  24
+PT0				  BIT	      B9	  59
+PT1				  BIT	      BB	  61
+PX0				  BIT	      B8	  58
+PX1				  BIT	      BA	  60
+RB8				  BIT	      9A	  38
+RD				  BIT	      B7	  57
+REN				  BIT	      9C	  40
+RESET				  CODE	    0000	  71
+RI				  BIT	      98	  36
+RS0				  BIT	      D3	  65
+RS1				  BIT	      D4	  66
+RXD				  BIT	      B0	  50
+SBUF				  DATA	      99	  19
+SCAN				  CODE	    0119	 105
+SCON				  DATA	      98	  18
+SINT				  CODE	    0023	  76
+SM0				  BIT	      9F	  43
+SM1				  BIT	      9E	  42
+SM2				  BIT	      9D	  41
+SP				  DATA	      81	   7
+START				  CODE	    0100	  88
+T0				  BIT	      B4	  54
+T1				  BIT	      B5	  55
+TABLE				  CODE	    01C9	 223
+TB8				  BIT	      9B	  39
+TCON				  DATA	      88	  11
+TF0				  BIT	      8D	  33
+TF1				  BIT	      8F	  35
+TH0				  DATA	      8C	  15
+TH1				  DATA	      8D	  16
+TI				  BIT	      99	  37
+TIMER0				  CODE	    000B	  73
+TIMER1				  CODE	    001B	  75
+TL0				  DATA	      8A	  13
+TL1				  DATA	      8B	  14
+TMOD				  DATA	      89	  12
+TR0				  BIT	      8C	  32
+TR1				  BIT	      8E	  34
+TXD				  BIT	      B1	  51
+WR				  BIT	      B6	  56
